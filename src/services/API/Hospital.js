@@ -77,7 +77,7 @@ export const addHospital = async (formData) => {
     //Removing country from object (maybe i should delete that col. in database)
     // eslint-disable-next-line no-unused-vars
     const { ["country"]: country, ...hospitalRow } = formData;
-    return { id: hospitalId, ...hospitalRow };
+    return { id: hospitalId, contactInfoId, ...hospitalRow };
   } catch (error) {
     console.error(error);
   }
