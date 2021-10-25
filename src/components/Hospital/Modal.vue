@@ -1,48 +1,76 @@
 <template>
-  <div
-    class="modal fade"
-    id="exampleModal"
-    tabindex="-1"
-    aria-labelledby="exampleModalLabel"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog">
+  <transition name="fade">
+    <div class="modal-wrapper" v-if="showModal">
+      <div class="modal-background" @click="close"></div>
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="modal-body">...</div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Close
-          </button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
+        <slot></slot>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
-import { onMounted } from "@vue/runtime-core";
 export default {
-  setup() {
-    onMounted(() => {
-      console.log("modal mounted");
-    });
+  name: "Modal",
+  props: {
+    show: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      showModal: false,
+    };
+  },
+  watch: {
+    show: function (val) {
+      this.showModal = val;
+    },
+  },
+  methods: {
+    close() {
+      //this.showModal = false;
+      this.$emit("close");
+    },
   },
 };
 </script>
 
 <style>
+.modal-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+}
+.modal-background {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+.modal-content {
+  width: 500px;
+  height: auto;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
