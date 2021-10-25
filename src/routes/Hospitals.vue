@@ -1,20 +1,25 @@
 <template>
   <div class="container">
+    <h1 class="text-white text-center">Hospitales</h1>
+    <Modal :show="showModal" @close="showModal = false" @keydown.esc="showModal = false" tabindex="0">
+      <HospitalForm
+        :addRow="addRow"
+        :editRow="updateRow"
+        :form="selectedRow"
+        :isEdit="editingForm"
+        @close-modal="showModal = false"
+      />
+    </Modal>
     <DataTable
       :headers="headers"
       :content="content"
       :deleteRow="deleteRow"
       :updateRow="updateRow"
-      @open-modal="showingModal = true"
+      :exclude="['id', 'contactInfoId', 'country']"
+      @open-modal="showModal = true"
+      @add-mode="editingForm = false; selectedRow = undefined"
+      @edit-mode="(row) => {editingForm = true; selectedRow = row}"
     />
-    <Modal v-show="showingModal" @close="showingModal = false">
-      <HospitalForm
-        :addRow="addRow"
-        :editRow="updateRow"
-        :hideModal="setShowingModal"
-        :form="selectedRow"
-      />
-    </Modal>
   </div>
 </template>
 
@@ -23,7 +28,7 @@ import DataTable from "../components/DataTable.vue";
 import Modal from "../components/Hospital/Modal.vue";
 import HospitalForm from "../components/Hospital/HospitalForm.vue";
 import { onMounted } from "@vue/runtime-core";
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import {
   getAll,
   deleteHospital,
@@ -37,6 +42,7 @@ export default {
     Modal,
     HospitalForm,
   },
+  emits: ["addRow", "updateRow", "deleteRow",],
   setup() {
     const headers = [
       "Nombre",
@@ -48,15 +54,17 @@ export default {
       "Correo Electrónico",
     ];
     const content = ref([]);
+    const showModal = ref(false);
+    const editingForm = ref(false);
 
-    const showingModal = ref(false);
+    let selectedRow = reactive({});
 
     //CRUD Operations
     const addRow = async (data) => {
       //Adding to database
-      await addHospital(data);
+      const hospital = await addHospital(data);
       //Updating table
-      content.value.push(data);
+      content.value.push(hospital);
     };
 
     const deleteRow = async (id) => {
@@ -84,7 +92,9 @@ export default {
       addRow,
       deleteRow,
       updateRow,
-      showingModal,
+      showModal,
+      editingForm,
+      selectedRow,
     };
   },
 };
