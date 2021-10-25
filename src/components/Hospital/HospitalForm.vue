@@ -101,20 +101,30 @@ export default {
     editRow: Function,
     form: Object,
     isEdit: Boolean,
-    hideModal: Function
   },
-  setup(props) {
+  emits: ["add", "edit", "close-modal"],
+  setup(props, { emit }) {
     const formData = reactive({ ...props.form });
 
     onMounted(() => {
-      console.log("props:", props.form);
+      console.log('formData: ', formData)
+      if (props.isEdit) {
+        formData.name = props.form.name;
+        formData.address = props.form.address;
+        formData.postalCode = props.form.postalCode;
+        formData.city = props.form.city;
+        formData.state = props.form.state;
+        formData.phone = props.form.phone;
+        formData.email = props.form.email;
+        formData.contactInfoId = props.form.contactInfoId;
+      }
     });
 
     const send = async () => {
       props.isEdit
         ? await props.editRow(formData.id, formData.contactInfoId, formData)
         : await props.addRow(formData);
-      props.showModal(false)
+      emit("close-modal");
     };
 
     return {
