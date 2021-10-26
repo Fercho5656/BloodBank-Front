@@ -61,7 +61,7 @@ export default {
   height: auto;
   background-color: #fff;
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 10px rgba(182, 166, 166, 0.5);
   padding: 20px;
 }
 
