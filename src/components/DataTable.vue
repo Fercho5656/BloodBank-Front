@@ -10,11 +10,20 @@
       >
         <i class="bi bi-plus-lg text-info"></i>
       </button>
-      <input class="search" type="text" placeholder="Buscar" />
-      <button class="btn">
+      <input
+        class="search"
+        type="text"
+        placeholder="Buscar"
+        v-model="searchQuery"
+      />
+      <button
+        class="btn"
+        :disabled="tableContent.length === 0 || selectedRows.length === 0"
+        @click="unselectDeleted"
+      >
         <i class="bi bi-trash text-light"></i>
       </button>
-      <button class="btn">
+      <button class="btn" @click="$emit('reload')">
         <i class="bi bi-arrow-clockwise text-info"></i>
       </button>
       <button class="btn">
@@ -25,7 +34,14 @@
       <table class="table table-dark table-hover">
         <thead>
           <tr>
-            <th><input type="checkbox" class="form-check-input checkbox" /></th>
+            <th>
+              <input
+                type="checkbox"
+                class="form-check-input checkbox"
+                v-model="allSelected"
+                @change="selectAll"
+              />
+            </th>
             <th v-for="header in headers" :key="header">
               {{ header }}
             </th>
@@ -33,8 +49,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="data in content" :key="data.id" :data-id="data.id">
-            <td><input type="checkbox" class="form-check-input checkbox" /></td>
+          <tr v-for="data in tableContent" :key="data.id" :data-id="data.id">
+            <td>
+              <input
+                type="checkbox"
+                class="form-check-input checkbox"
+                @change="selectRow(data.id)"
+                :checked="selectedRows.includes(data.id)"
+              />
+            </td>
             <template v-for="(value, index) in data" :key="value">
               <td v-if="!exclude.includes(index)">
                 {{ value }}
@@ -51,7 +74,7 @@
                 >
                   <i class="bi bi-pencil text-warning"></i>
                 </button>
-                <button class="btn" @click="deleteTableRow(data.id)">
+                <button class="btn" @click="$emit('delete-row', data)">
                   <i class="bi bi-trash text-primary"></i>
                 </button>
               </div>
@@ -59,14 +82,19 @@
           </tr>
         </tbody>
       </table>
+      <Loading text="Cargando..." v-if="isLoading" />
     </div>
   </div>
 </template>
 
 <script>
-import { computed, onUpdated } from "@vue/runtime-core";
+import { ref } from "vue";
+import Loading from "../components/Loading.vue";
 export default {
   name: "DataTable",
+  components: {
+    Loading,
+  },
   props: {
     headers: Array,
     content: Array,
@@ -74,26 +102,63 @@ export default {
     deleteRow: Function,
     updateRow: Function,
     exclude: Array,
+    isLoading: {
+      type: Boolean,
+      default: true,
+    },
   },
-  emits: ["open-modal", "add-mode", "edit-mode"],
-  setup(props) {
-    const tableData = computed(() => {
-      return props.content;
-    });
-    onUpdated(() => {
-      console.log(props.content);
-    });
+  emits: [
+    "open-modal",
+    "add-mode",
+    "edit-mode",
+    "reload",
+    "delete-row",
+    "delete-selected",
+  ],
+  setup(props, { emit }) {
+    const searchQuery = ref("");
+    const selectedRows = ref([]);
+    const allSelected = ref(false);
 
-    //CRUD Operations
-    const deleteTableRow = (id) => {
-      if (confirm("¿Seguro que desea eliminar esta fila?")) {
-        props.deleteRow(id);
+    const selectRow = (id) => {
+      if (selectedRows.value.includes(id)) {
+        selectedRows.value = selectedRows.value.filter((item) => item !== id);
+      } else {
+        selectedRows.value.push(id);
       }
     };
-    return {
-      tableData,
-      deleteTableRow,
+
+    const selectAll = () => {
+      if (!allSelected.value) {
+        selectedRows.value = [];
+      } else {
+        selectedRows.value = props.content.map((item) => item.id);
+      }
     };
+
+    const unselectDeleted = () => {
+      emit('delete-selected', selectedRows.value)
+      selectedRows.value = [];
+    };
+
+    return {
+      searchQuery,
+      selectedRows,
+      selectRow,
+      selectAll,
+      allSelected,
+      unselectDeleted,
+    };
+  },
+  computed: {
+    tableContent() {
+      return this.content.filter((item) => {
+        return Object.values(item)
+          .join("")
+          .toLowerCase()
+          .includes(this.searchQuery.toLowerCase());
+      });
+    },
   },
 };
 </script>
