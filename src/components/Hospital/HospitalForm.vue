@@ -25,44 +25,48 @@
         v-model="formData.address"
       />
     </div>
-    <div class="mb-3">
-      <label for="hospitalPostalCode">Código Postal</label>
-      <input
-        required
-        type="number"
-        class="form-control"
-        id="hospitalPostalCode"
-        v-model="formData.postalCode"
-      />
+    <div class="mb-3 two-inputs">
+      <div>
+        <label for="hospitalPostalCode">Código Postal</label>
+        <input
+          required
+          type="number"
+          class="form-control"
+          id="hospitalPostalCode"
+          v-model="formData.postalCode"
+        />
+      </div>
+      <div>
+        <label for="hospitalCity">Ciudad</label>
+        <input
+          required
+          type="text"
+          class="form-control"
+          id="hospitalCity"
+          v-model="formData.city"
+        />
+      </div>
     </div>
-    <div class="mb-3">
-      <label for="hospitalCity">Ciudad</label>
-      <input
-        required
-        type="text"
-        class="form-control"
-        id="hospitalCity"
-        v-model="formData.city"
-      />
-    </div>
-    <div class="mb-3">
-      <label for="hospitalState">Estado</label>
-      <input
-        required
-        type="text"
-        class="form-control"
-        id="hospitalState"
-        v-model="formData.state"
-      />
-    </div>
-    <div class="mb-3">
-      <label for="hospitalCountry">País</label>
-      <input
-        type="text"
-        class="form-control"
-        id="hospitalCountry"
-        v-model="formData.country"
-      />
+    <div class="mb-3 two-inputs">
+      <div>
+        <label for="hospitalState">Estado</label>
+        <input
+          required
+          type="text"
+          class="form-control"
+          id="hospitalState"
+          v-model="formData.state"
+        />
+      </div>
+      <div>
+        <label for="hospitalCountry">País</label>
+        <input
+          type="text"
+          class="form-control"
+          id="hospitalCountry"
+          v-model="formData.country"
+        />
+      </div>
     </div>
     <div class="mb-3">
       <label for="hospitalPhone">Teléfono</label>
@@ -85,7 +89,7 @@
       />
     </div>
     <hr />
-    <button class="btn btn-success">
+    <button class="btn btn-success" :disabled="disabledForm">
       <template v-if="isEdit">Editar</template>
       <template v-else>Añadir</template>
     </button>
@@ -93,7 +97,7 @@
 </template>
 
 <script>
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, ref } from "vue";
 export default {
   name: "HospitalForm",
   props: {
@@ -105,9 +109,10 @@ export default {
   emits: ["add", "edit", "close-modal"],
   setup(props, { emit }) {
     const formData = reactive({ ...props.form });
+    const disabledForm = ref(false);
 
     onMounted(() => {
-      console.log('formData: ', formData)
+      console.log("formData: ", formData);
       if (props.isEdit) {
         formData.name = props.form.name;
         formData.address = props.form.address;
@@ -121,19 +126,27 @@ export default {
     });
 
     const send = async () => {
+      disabledForm.value = true;
       props.isEdit
         ? await props.editRow(formData.id, formData.contactInfoId, formData)
         : await props.addRow(formData);
       emit("close-modal");
+      disabledForm.value = false;
     };
 
     return {
       send,
       formData,
+      disabledForm
     };
   },
 };
 </script>
 
 <style>
+.two-inputs {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 </style>
