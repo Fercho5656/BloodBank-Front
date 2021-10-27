@@ -7,12 +7,12 @@
       <div class="inner-block bg-warning">
           <div class="bloodgroup">
               <i class="bi bi-people-fill p-2" />
-              <p class="p-2"><strong>A+</strong></p>
+              <p class="p-2"><strong>{{bloodgroup}}</strong></p>
           </div>
           <div class="vr" />
           <div class="quantity">
               <i class="bi bi-box p-2" />
-              <p class="p-2">10L</p>
+              <p class="p-2">{{quantity}}</p>
           </div>
       </div>
     </div>
@@ -22,6 +22,16 @@
 <script>
 export default {
   name: "BloodInfo",
+  props: {
+    bloodgroup: {
+      type: String,
+      required: true
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    }
+  }
 };
 </script>
 
