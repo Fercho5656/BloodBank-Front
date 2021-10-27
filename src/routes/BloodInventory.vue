@@ -1,9 +1,17 @@
 <template>
-
   <div class="container">
-    <select v-model="selectedBloodBank" @change="getBloodGroups" class="form-control">
-      <option value="0" selected disabled>Seleccione un banco</option>
-      <option v-for="bloodBank in bloodBanks" :value="bloodBank.id" :key="bloodBank.id">
+    <h1 class="text-white text-center">Inventario</h1>
+    <select
+      v-model="selectedBloodBank"
+      @change="updateBloodGroups"
+      class="form-control"
+    >
+      <option value="0" disabled>Seleccione un banco</option>
+      <option
+        v-for="bloodBank in bloodBanks"
+        :value="bloodBank.id"
+        :key="bloodBank.id"
+      >
         {{ bloodBank.bankName }}
       </option>
     </select>
@@ -20,47 +28,56 @@
       </div>
     </div>
   </div>
+  <Loading text="Cargando..." v-if="isLoading" />
 </template>
 
 <script>
-import BloodInfo from "../components/BloodInfo.vue";
+import BloodInfo from "../components/BloodInventory/BloodInfo.vue";
+import Loading from "../components/Loading.vue";
 import { getByBankId } from "../services/API/BloodGroups";
-import {getAllBloodBanks} from '../services/API/BloodBanks'
-import { onMounted, onUpdated, ref } from "vue";
+import { getAllBloodBanks } from "../services/API/BloodBanks";
+import { onMounted, ref } from "vue";
 export default {
   name: "BloodInventory",
   components: {
     BloodInfo,
+    Loading,
   },
   setup() {
     const bloodGroups = ref([]);
     const bloodBanks = ref([]);
-    const selectedBloodBank = ref(0);
+    const selectedBloodBank = ref(1);
+    const isLoading = ref(true);
 
-    const getBloodGroups = async () => {
-      const { $values } = await getByBankId(selectedBloodBank.value);
+    const getBloodGroups = async (id) => {
+      isLoading.value = true;
+      const { $values } = await getByBankId(id);
+      isLoading.value = false;
       return $values;
     };
 
     const getBloodBanks = async () => {
+      isLoading.value = true;
       const { $values } = await getAllBloodBanks();
-      console.log($values);
+      isLoading.value = false;
       return $values;
     };
 
-    onMounted(async () => {
-      bloodGroups.value = await getBloodGroups();
-      bloodBanks.value = await getBloodBanks();
-    });
+    const updateBloodGroups = async () => {
+      bloodGroups.value = await getBloodGroups(selectedBloodBank.value);
+    };
 
-    onUpdated(async () => {
-      bloodGroups.value = await getBloodGroups();
+    onMounted(async () => {
+      bloodGroups.value = await getBloodGroups(selectedBloodBank.value);
+      bloodBanks.value = await getBloodBanks();
     });
 
     return {
       bloodGroups,
       bloodBanks,
-      selectedBloodBank
+      selectedBloodBank,
+      isLoading,
+      updateBloodGroups
     };
   },
 };
