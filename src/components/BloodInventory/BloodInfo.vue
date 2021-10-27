@@ -12,7 +12,7 @@
           <div class="vr" />
           <div class="quantity">
               <i class="bi bi-box p-2" />
-              <p class="p-2">{{quantity}}</p>
+              <p class="p-2">{{quantity}} mL</p>
           </div>
       </div>
     </div>
