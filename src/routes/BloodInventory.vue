@@ -1,9 +1,8 @@
 <template>
   <div class="container">
-    <h1 class="text-white text-center">Inventario</h1>
     <select
       v-model="selectedBloodBank"
-      @change="updateBloodGroups"
+      @change="changeBloodBank"
       class="form-control"
     >
       <option value="0" disabled>Seleccione un banco</option>
@@ -32,7 +31,7 @@
 </template>
 
 <script>
-import BloodInfo from "../components/BloodInventory/BloodInfo.vue";
+import BloodInfo from "../components/BloodInfo.vue";
 import Loading from "../components/Loading.vue";
 import { getByBankId } from "../services/API/BloodGroups";
 import { getAllBloodBanks } from "../services/API/BloodBanks";
@@ -46,7 +45,7 @@ export default {
   setup() {
     const bloodGroups = ref([]);
     const bloodBanks = ref([]);
-    const selectedBloodBank = ref(1);
+    const selectedBloodBank = ref(3);
     const isLoading = ref(true);
 
     const getBloodGroups = async (id) => {
@@ -63,13 +62,15 @@ export default {
       return $values;
     };
 
-    const updateBloodGroups = async () => {
+    const changeBloodBank = async () => {
       bloodGroups.value = await getBloodGroups(selectedBloodBank.value);
     };
 
     onMounted(async () => {
+      isLoading.value = true;
       bloodGroups.value = await getBloodGroups(selectedBloodBank.value);
       bloodBanks.value = await getBloodBanks();
+      isLoading.value = false;
     });
 
     return {
@@ -77,7 +78,7 @@ export default {
       bloodBanks,
       selectedBloodBank,
       isLoading,
-      updateBloodGroups
+      changeBloodBank,
     };
   },
 };

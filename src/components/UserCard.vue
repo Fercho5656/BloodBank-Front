@@ -5,31 +5,59 @@
     </div>
     <div class="card-block">
       <div class="user-image">
-        <img
-          src="https://bootdey.com/img/Content/avatar/avatar7.png"
-          alt=""
-          class="img-radius"
-        />
+        <img :src="user.profilePicURL" alt="" class="img-radius" />
       </div>
-      <p class="text-xl-center"><b>Nombre</b></p>
-      <p class="text-xl-center"><b>21 años</b></p>
+      <p class="text-center">
+        <b>{{ user.fullName }}</b>
+      </p>
+      <p class="text-center">
+        <b>{{ user.age }} años</b>
+      </p>
       <div class="inner-block bg-warning p-2 mb-3">
-        <i class="bi bi-droplet">&nbsp;A+</i>
+        <i class="bi bi-droplet"
+          >&nbsp;{{ `${user.bloodGroup.bloodType}${user.bloodGroup.rh}` }}</i
+        >
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
 export default {
   name: "UserCard",
+  props: {
+    user: {
+      type: Object,
+      required: true,
+      default: () => ({
+        name: "Nombre",
+        age: 0,
+        blood: "Tipo de Sangre, RH",
+      }),
+    },
+  },
+  setup() {
+    const showModal = ref(false);
+
+    return { showModal };
+  },
 };
 </script>
 
 <style>
 .card {
   border-radius: 2%;
+  transition: transform 0.3s ease;
 }
+
+.card:hover {
+  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.75);
+  transform: scale(1.02);
+  z-index: 1;
+  cursor: pointer;
+}
+
 .card-block {
   display: flex;
   flex-flow: column nowrap;
@@ -38,6 +66,7 @@ export default {
 .img-radius {
   border-radius: 50%;
   width: 100px;
+  height: 100px;
 }
 
 .lg-badge {

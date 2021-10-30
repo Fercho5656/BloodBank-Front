@@ -47,6 +47,8 @@ export default {
   left: 0;
   height: 100vh;
   width: 100vw;
+  z-index: 9999;
+  overflow-y: auto;
 }
 .modal-background {
   background-color: rgba(0, 0, 0, 0.5);
@@ -57,7 +59,7 @@ export default {
   height: 100vh;
 }
 .modal-content {
-  width: 500px;
+  width: auto;
   height: auto;
   background-color: #fff;
   border-radius: 5px;

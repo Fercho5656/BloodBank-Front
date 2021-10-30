@@ -24,7 +24,7 @@ export default {
   props: {
     text: {
       type: String,
-      default: "Loading...",
+      default: "Cargando...",
     },
   },
 };
