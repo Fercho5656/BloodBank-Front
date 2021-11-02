@@ -58,11 +58,19 @@ export default {
   cursor: pointer;
 }
 
+.card-header {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
 .card-block {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
 }
+
 .img-radius {
   border-radius: 50%;
   width: 100px;
@@ -72,11 +80,13 @@ export default {
 .lg-badge {
   font-size: 1em;
 }
+
 .inner-block {
   border-radius: 10%;
   display: flex;
   flex-flow: row-reverse nowrap;
 }
+
 .bi {
   font-size: 2em;
 }
