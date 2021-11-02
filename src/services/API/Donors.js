@@ -1,4 +1,4 @@
-const ENDPOINT = "https://localhost:5001/api/donor/";
+const ENDPOINT = "https://localhost:5001/api/donor";
 const MILLISECONDS_IN_YEAR = 31536000000;
 
 export const getDonors = async () => {
@@ -14,3 +14,30 @@ export const getDonors = async () => {
     console.error(error);
   }
 };
+
+export const addDonor = async (donor) => {
+  console.log('donor', donor);
+  try {
+    const response = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(donor),
+    });
+    return response.json();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export const deleteDonor = async (id) => {
+  try {
+    const response = await fetch(`${ENDPOINT}/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) throw new Error("error", response.error);
+  } catch (error) {
+    console.error(error);
+  }
+}
