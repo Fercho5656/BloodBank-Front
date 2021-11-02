@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import BloodInfo from "../components/BloodInfo.vue";
+import BloodInfo from "../components/BloodInventory/BloodInfo.vue";
 import Loading from "../components/Loading.vue";
 import { getByBankId } from "../services/API/BloodGroups";
 import { getAllBloodBanks } from "../services/API/BloodBanks";
