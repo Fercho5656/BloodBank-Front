@@ -9,15 +9,28 @@
           {{ userInfo.fullName }}
         </p>
       </div>
+      <div class="actions">
+        <button class="btn">
+          <i class="bi bi-pencil" @click="$emit('edit-user')"></i>
+        </button>
+        <button class="btn" @click="$emit('delete-user', userInfo.id)">
+          <i class="bi bi-trash"></i>
+        </button>
+      </div>
     </div>
     <div class="user-info__contact-info">
-        <p>Tipo de sangre: {{userInfo.bloodGroup.bloodType}}{{userInfo.bloodGroup.rh}}</p>
-        <hr>
-        <p>Domicilio: {{contactInfo.address}}, {{contactInfo.postalCode}} - {{contactInfo.city}}, {{contactInfo.state}}</p>
-        <p>Teléfono: {{contactInfo.phone}}</p>
-        <p>Correo Electrónico: {{contactInfo.email}}</p>
+      <p>
+        Tipo de sangre: {{ userInfo.bloodGroup.bloodType
+        }}{{ userInfo.bloodGroup.rh }}
+      </p>
+      <hr />
+      <p>
+        Domicilio: {{ contactInfo.address }}, {{ contactInfo.postalCode }} -
+        {{ contactInfo.city }}, {{ contactInfo.state }}
+      </p>
+      <p>Teléfono: {{ contactInfo.phone }}</p>
+      <p>Correo Electrónico: {{ contactInfo.email }}</p>
     </div>
-    
   </div>
 </template>
 
@@ -25,6 +38,7 @@
 import { ref } from "vue";
 export default {
   name: "UserInfo",
+  emits: ["delete-user", "edit-user"],
   props: {
     user: {
       type: Object,
@@ -37,7 +51,7 @@ export default {
     console.log(userInfo.value);
     return {
       userInfo,
-      contactInfo
+      contactInfo,
     };
   },
 };
@@ -45,15 +59,15 @@ export default {
 
 <style>
 .user-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: #fff;
 }
 .user-info__basic {
   display: flex;
