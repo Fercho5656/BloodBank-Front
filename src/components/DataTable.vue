@@ -2,6 +2,7 @@
   <div class="shadow">
     <div class="table-actions mb-3 shadow">
       <button
+        v-if="readonly"
         class="btn"
         @click="
           $emit('open-modal');
@@ -72,17 +73,17 @@
                     $emit('edit-mode', data);
                   "
                 >
-                  <i class="bi bi-pencil text-warning"></i>
+                  <i :class=editIcon></i>
                 </button>
                 <button class="btn" @click="$emit('delete-row', data)">
-                  <i class="bi bi-trash text-primary"></i>
+                  <i :class=deleteIcon></i>
                 </button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
-      <Loading text="Cargando..." v-if="isLoading" />
+      <Loading v-if="isLoading" />
     </div>
   </div>
 </template>
@@ -102,9 +103,21 @@ export default {
     deleteRow: Function,
     updateRow: Function,
     exclude: Array,
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
     isLoading: {
       type: Boolean,
       default: true,
+    },
+    editIcon: {
+      type: String,
+      default: "bi bi-pencil text-warning",
+    },
+    deleteIcon: {
+      type: String,
+      default: "bi bi-trash text-primary",
     },
   },
   emits: [
@@ -137,7 +150,7 @@ export default {
     };
 
     const unselectDeleted = () => {
-      emit('delete-selected', selectedRows.value)
+      emit("delete-selected", selectedRows.value);
       selectedRows.value = [];
     };
 
