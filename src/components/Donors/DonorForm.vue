@@ -11,7 +11,18 @@
         type="text"
         class="form-control"
         id="donorName"
-        v-model="formData.name"
+        v-model="formData.fullName"
+      />
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="donorProfilePic"> Foto de Perfil </label>
+      <input
+        type="file"
+        class="form-control"
+        id="donorProfilePic"
+        accept="image/*"
+        @change="onFileChange"
+        required
       />
     </div>
     <div class="row mb-3">
@@ -21,17 +32,17 @@
           required
           class="form-control"
           id="donorBloodGroup"
-          v-model="formData.blood_group"
+          v-model="formData.bloodGroupId"
         >
           <option value="0" selected disabled>
             Seleccione un Grupo Sanguíneo
           </option>
           <option
-            v-for="bloodGroup in bloodGroups"
+            v-for="bloodGroup in bloodGroupsSelect"
             :value="bloodGroup.id"
             :key="bloodGroup.id"
           >
-            {{ bloodGroup.name }}
+            {{ `${bloodGroup.bloodType}${bloodGroup.rh}` }}
           </option>
         </select>
       </div>
@@ -122,7 +133,7 @@
 </template>
 
 <script>
-import {ref, reactive, onMounted} from 'vue'
+import { ref, reactive, onMounted } from "vue";
 export default {
   name: "DonorForm",
   props: {
@@ -130,16 +141,22 @@ export default {
     editRow: Function,
     form: Object,
     isEdit: Boolean,
+    bloodGroups: {
+      type: Array,
+      default: () => [],
+    },
   },
   emits: ["add", "edit", "close-modal"],
   setup(props, { emit }) {
     const formData = reactive({ ...props.form });
+    const bloodGroupsSelect = ref([]);
     const disabledForm = ref(false);
 
     onMounted(() => {
       console.log("formData: ", formData);
+      bloodGroupsSelect.value = props.bloodGroups;
       if (props.isEdit) {
-        formData.name = props.form.name;
+        formData.fullName = props.form.fullName;
         formData.address = props.form.address;
         formData.postalCode = props.form.postalCode;
         formData.city = props.form.city;
@@ -147,6 +164,9 @@ export default {
         formData.phone = props.form.phone;
         formData.email = props.form.email;
         formData.contactInfoId = props.form.contactInfoId;
+        formData.bloodGroupId = props.form.bloodGroupId;
+        formData.birthdate = props.form.birthdate;
+        formData.profilePic = props.form.profilePic;
       }
     });
 
@@ -159,15 +179,20 @@ export default {
       disabledForm.value = false;
     };
 
+    const onFileChange = async (e) => {
+      formData.profilePic = e.target.files[0];
+    };
+
     return {
       send,
       formData,
-      disabledForm
+      disabledForm,
+      onFileChange,
+      bloodGroupsSelect,
     };
-  }
+  },
 };
 </script>
 
 <style>
-
 </style>
