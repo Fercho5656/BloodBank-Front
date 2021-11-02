@@ -47,7 +47,7 @@ export default {
   left: 0;
   height: 100vh;
   width: 100vw;
-  z-index: 9999;
+  z-index: 9998;
   overflow-y: auto;
 }
 .modal-background {
