@@ -47,7 +47,7 @@ import HospitalForm from "../components/Hospital/HospitalForm.vue";
 import { onMounted } from "@vue/runtime-core";
 import { ref, reactive } from "vue";
 import {
-  getAll,
+  getHospitals,
   deleteHospital,
   addHospital,
   editHospital,
@@ -81,7 +81,7 @@ export default {
 
     const getData = async () => {
       isLoading.value = true;
-      content.value = await getAll();
+      content.value = await getHospitals();
       isLoading.value = false;
     };
 
