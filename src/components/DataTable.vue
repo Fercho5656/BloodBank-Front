@@ -2,7 +2,7 @@
   <div class="shadow">
     <div class="table-actions mb-3 shadow">
       <button
-        v-if="readonly"
+        v-if="!readonly"
         class="btn"
         @click="
           $emit('open-modal');
