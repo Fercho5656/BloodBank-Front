@@ -1,5 +1,5 @@
 <template>
-  <h2>Peticiones Pendientes</h2>
+  <h2 class="text-white">Peticiones Pendientes</h2>
   <table class="table table-dark table-hover">
     <thead>
       <tr>
@@ -29,7 +29,8 @@
 
 <script>
 export default {
-    name: 'PendientRequests'
+  name: "PendientRequests",
+  components: {},
 };
 </script>
 

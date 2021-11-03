@@ -1,5 +1,5 @@
 <template>
-  <h2>Historial de Peticiones</h2>
+  <h2 class="text-white">Historial de Peticiones</h2>
   <table class="table table-dark table-hover">
     <thead>
       <tr>
