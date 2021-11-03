@@ -1,7 +1,7 @@
 const HOSPITAL_ENDPOINT = "https://localhost:5001/api/Hospital";
 const CONTACT_INFO_ENDPOINT = "https://localhost:5001/api/ContactInfo";
 
-export const getAll = async () => {
+export const getHospitals = async () => {
   try {
     const response = await fetch(HOSPITAL_ENDPOINT);
     if (!response.ok) throw new Error("Error: ", response.error);
