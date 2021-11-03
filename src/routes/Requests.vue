@@ -10,7 +10,7 @@
       </button>
     </header>
     <!-- Add dynamic data (no placeholder -_-) -->
-    <RequestsHistory />
+    <RequestsHistory :requests="requestsHistory" />
     <hr />
     <PendientRequests />
     <Modal
@@ -19,7 +19,11 @@
       @keydown.esc="showCreateRequestModal = false"
       tabindex="0"
     >
-      <RequestForm :bloodGroups="bloodGroups" :hospitals="hospitals" @send-request="sendRequest" />
+      <RequestForm
+        :bloodGroups="bloodGroups"
+        :hospitals="hospitals"
+        @send-request="sendRequest"
+      />
     </Modal>
     <Loading v-if="isLoading" />
   </div>
@@ -68,6 +72,7 @@ export default {
         getHospitals(),
         getRequests(),
       ]);
+
       bloodGroups.value = bloodGroupsInfo;
       hospitals.value = hospitalsInfo;
       //Requests
@@ -88,7 +93,9 @@ export default {
       showCreateRequestModal,
       bloodGroups,
       hospitals,
-      sendRequest
+      sendRequest,
+      requestsHistory,
+      pendientRequests,
     };
   },
 };

@@ -4,7 +4,6 @@
     <thead>
       <tr>
         <th>#</th>
-        <th>Fecha</th>
         <th>Hospital</th>
         <th>Grupo Sanguíneo</th>
         <th>Cantidad</th>
@@ -12,13 +11,24 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
+      <!-- <tr>
         <td>5</td>
-        <td>11/10/2021</td>
         <td>Hospital San Fercho</td>
         <td>AB+</td>
         <td>1500 mL</td>
         <td class="text-warning"><strong>Rechazada</strong></td>
+      </tr> -->
+      <tr v-for="request in requests" :key="request.$id">
+        <td>{{ request.id }}</td>
+        <td>{{ request.hospital.name }}</td>
+        <td>{{ `${request.bloodGroup.bloodType}${request.bloodGroup.rh}` }}</td>
+        <td>{{ request.quantity }} mL</td>
+        <td v-if="request.status === 'Aceptada'">
+          <span class="badge bg-success">Aceptada</span>
+        </td>
+        <td v-if="request.status === 'Rechazada'">
+          <span class="badge bg-primary">Rechazada</span>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -27,8 +37,22 @@
 <script>
 export default {
   name: "RequestsHistory",
+  props: {
+    requests: Array
+  },
+  computed: {
+    requestsInfo() {
+      return this.requests;
+    }
+  }
+
 };
 </script>
 
-<style>
+<style scoped>
+  span.badge {
+    width: 100%;
+    margin-right: 5px;
+    font-size: 1rem;
+  }
 </style>
