@@ -1,17 +1,22 @@
 <template>
   <h1>Formulario Solicitud de Sangre</h1>
   <p>
-    Llenar este formulario con el tipo de sangre,
-    la cantidad en mililitros necesarias y el hospital solicitante.
+    Llenar este formulario con el tipo de sangre, la cantidad en mililitros
+    necesarias y el hospital solicitante.
   </p>
   <p class="text-warning">* Campos requeridos</p>
-  <hr>
-  <form @submit.prevent="$emit('send-request')">
+  <hr />
+  <form @submit.prevent="sendRequest">
     <div class="mb-3">
       <label for="bloodGroup" class="form-label"
         >Grupo Sanguíneo <span class="text-warning">*</span>
       </label>
-      <select required id="bloodGroup" class="form-control" v-model="selectedBloodGroup">
+      <select
+        required
+        id="bloodGroup"
+        class="form-control"
+        v-model="selectedBloodGroup"
+      >
         <option value="" disabled>Seleccione un grupo sanguíneo</option>
         <option
           v-for="bloodGroup in bloodGroupsValue"
@@ -27,7 +32,12 @@
         >Hospital <span class="text-warning">*</span>
       </label>
 
-      <select required id="hospital" class="form-control" v-model="selectedHospital">
+      <select
+        required
+        id="hospital"
+        class="form-control"
+        v-model="selectedHospital"
+      >
         <option value="" disabled>Seleccione un hospital</option>
         <option
           v-for="hospital in hospitalsValue"
@@ -49,12 +59,11 @@
         min="0"
         required
         placeholder="0 mL"
+        v-model="bloodQuantity"
       />
     </div>
     <div class="mb-3 buttons">
-      <button class="btn btn-success" @click="$emit('send-request')">
-        Crear Solicitud
-      </button>
+      <button class="btn btn-success">Crear Solicitud</button>
     </div>
   </form>
 </template>
@@ -74,13 +83,28 @@ export default {
     },
   },
   emits: ["send-request"],
-  setup() {
+  setup(props, { emit }) {
     const selectedBloodGroup = ref(0);
     const selectedHospital = ref(0);
+    const bloodQuantity = ref(0);
+
+    const sendRequest = () => {
+      const request = {
+        quantity: bloodQuantity.value,
+        active: true,
+        status: "Pendiente",
+        date: new Date(),
+        hospitalId: selectedHospital.value,
+        bloodGroupId: selectedBloodGroup.value,
+      };
+      emit("send-request", request);
+    };
 
     return {
       selectedBloodGroup,
       selectedHospital,
+      sendRequest,
+      bloodQuantity,
     };
   },
   computed: {
