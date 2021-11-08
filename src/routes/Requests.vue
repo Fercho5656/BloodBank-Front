@@ -9,10 +9,13 @@
         Abrir Petición
       </button>
     </header>
-    <!-- Add dynamic data (no placeholder -_-) -->
     <RequestsHistory :requests="requestsHistory" />
     <hr />
-    <PendientRequests />
+    <PendingRequests
+      :requests="pendingRequests"
+      @accept-request="solveRequest"
+      @reject-request="solveRequest"
+    />
     <Modal
       :show="showCreateRequestModal"
       @close="showCreateRequestModal = false"
@@ -31,19 +34,23 @@
 
 <script>
 import RequestsHistory from "../components/Requests/RequestsHistory.vue";
-import PendientRequests from "../components/Requests/PendientRequests.vue";
+import PendingRequests from "../components/Requests/PendingRequests.vue";
 import RequestForm from "../components/Requests/RequestForm.vue";
 import Modal from "../components/Modal.vue";
 import Loading from "../components/Loading.vue";
 import { getBloodGroupsInfo } from "../services/API/BloodGroups";
 import { getHospitals } from "../services/API/Hospital";
-import { getRequests, createRequest } from "../services/API/Requests";
+import {
+  getRequests,
+  createRequest,
+  updateRequest,
+} from "../services/API/Requests";
 import { onMounted, ref } from "vue";
 export default {
   name: "Requests",
   components: {
     RequestsHistory,
-    PendientRequests,
+    PendingRequests,
     RequestForm,
     Modal,
     Loading,
@@ -56,13 +63,37 @@ export default {
     const hospitals = ref([]);
 
     const requestsHistory = ref([]);
-    const pendientRequests = ref([]);
+    const pendingRequests = ref([]);
 
     const sendRequest = async (request) => {
       isLoading.value = true;
       const result = await createRequest(request);
-      pendientRequests.value.push(result);
+      pendingRequests.value.push(result);
       isLoading.value = false;
+    };
+
+    // Sets request status as accepted or rejected
+    const solveRequest = async ({ request, status }) => {
+      const messageStatus = status === "Aceptada" ? "aceptar" : "rechazar";
+      if (confirm(`¿Deseas ${messageStatus} esta petición?`)) {
+        isLoading.value = true;
+        const newRequest = {
+          quantity: request.quantity,
+          active: false,
+          status,
+          date: new Date(request.date),
+          hospitalId: request.hospital.id,
+          bloodGroupId: request.bloodGroup.id,
+        };
+        const result = await updateRequest(newRequest, request.id);
+        const index = pendingRequests.value.findIndex(
+          (r) => r.id === request.id
+        );
+        //Updates the request in the pending and history requests arrays
+        pendingRequests.value.splice(index, 1);
+        requestsHistory.value.push(result);
+        isLoading.value = false;
+      }
     };
 
     onMounted(async () => {
@@ -79,12 +110,9 @@ export default {
       requestsHistory.value = requestsInfo.filter(
         (request) => request.active === false
       );
-      pendientRequests.value = requestsInfo.filter(
+      pendingRequests.value = requestsInfo.filter(
         (request) => request.active === true
       );
-
-      console.log("history", requestsHistory.value);
-      console.log("pending", pendientRequests.value);
       isLoading.value = false;
     });
 
@@ -95,7 +123,8 @@ export default {
       hospitals,
       sendRequest,
       requestsHistory,
-      pendientRequests,
+      pendingRequests,
+      solveRequest,
     };
   },
 };
