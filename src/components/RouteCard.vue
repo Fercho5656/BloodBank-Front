@@ -1,13 +1,15 @@
 <template>
-  <article class="card route-card mb-3">
-    <header class="card-header">
-      <h1>{{ name }}</h1>
-    </header>
-    <div class="card-body">
-      <i :class="icon"></i>
-      <p>{{ description }}</p>
-    </div>
-  </article>
+  <router-link :to="link" style="text-decoration: none; color: inherit">
+    <article class="card route-card mb-3">
+      <header class="card-header">
+        <h1>{{ name }}</h1>
+      </header>
+      <div class="card-body">
+        <i :class="icon"></i>
+        <p>{{ description }}</p>
+      </div>
+    </article>
+  </router-link>
 </template>
 
 <script>
@@ -26,6 +28,10 @@ export default {
       type: String,
       required: true,
       default: "bi bi-slash-circle",
+    },
+    link: {
+      type: String,
+      required: true,
     },
   },
 };
