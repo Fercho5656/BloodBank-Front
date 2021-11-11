@@ -45,7 +45,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .card {
   border-radius: 2%;
   transition: transform 0.3s ease;
@@ -54,7 +54,7 @@ export default {
 .card:hover {
   box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.75);
   transform: scale(1.02);
-  z-index: 1;
+  z-index: 1; 
   cursor: pointer;
 }
 
