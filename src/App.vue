@@ -1,16 +1,14 @@
 <template>
   <Nav />
-  <Home/>
+  <router-view />
 </template>
 
 <script>
 import Nav from "./components/Nav.vue";
-import Home from "./routes/Home.vue";
 export default {
   name: "App",
   components: {
     Nav,
-    Home,
   },
 };
 </script>
