@@ -10,6 +10,7 @@
           :name="route.name"
           :description="route.description"
           :icon="route.icon"
+          :link="route.link"
         />
       </div>
     </div>
@@ -30,28 +31,28 @@ export default {
         description:
           "En esta sección encontrarás a los donadores que han ayudado a la comunidad.",
         icon: "bi bi-person-circle",
-        route: "/donors",
+        link: "/donors",
       },
       {
         name: "Donaciones",
         description:
           "En esta sección encontrarás las donaciones que han realizado los donadores.",
         icon: "bi bi-heart-fill",
-        route: "/donations",
+        link: "/donations",
       },
       {
         name: "Solicitudes",
         description:
           "En esta sección encontrarás las solicitudes de donaciones que han realizado los hospitales.",
         icon: "bi bi-pen",
-        route: "/requests",
+        link: "/requests",
       },
       {
         name: "Inventario",
         description:
           "En esta sección encontrarás la cantidad de sangre que hay en el inventario.",
         icon: "bi bi-box-seam",
-        route: "/inventory",
+        link: "/inventory",
       },
     ];
     return {
