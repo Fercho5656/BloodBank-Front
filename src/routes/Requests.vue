@@ -38,7 +38,7 @@ import PendingRequests from "../components/Requests/PendingRequests.vue";
 import RequestForm from "../components/Requests/RequestForm.vue";
 import Modal from "../components/Modal.vue";
 import Loading from "../components/Loading.vue";
-import { getBloodGroupsInfo } from "../services/API/BloodGroups";
+import { getBloodGroups, getByBankId } from "../services/API/BloodGroups";
 import { getHospitals } from "../services/API/Hospital";
 import {
   getRequests,
@@ -65,10 +65,14 @@ export default {
     const requestsHistory = ref([]);
     const pendingRequests = ref([]);
 
+    const bankStock = ref([]);
+
     const sendRequest = async (request) => {
       isLoading.value = true;
-      const result = await createRequest(request);
-      pendingRequests.value.push(result);
+      //Change bloodBankId with the one in GlobalState
+      const result = await createRequest({ ...request, bloodBankId: 1 });
+      pendingRequests.value.push({...result, date: new Date(request.date).toLocaleDateString()});
+      showCreateRequestModal.value = false;
       isLoading.value = false;
     };
 
@@ -98,14 +102,18 @@ export default {
 
     onMounted(async () => {
       isLoading.value = true;
-      const [bloodGroupsInfo, hospitalsInfo, requestsInfo] = await Promise.all([
-        getBloodGroupsInfo(),
-        getHospitals(),
-        getRequests(),
-      ]);
+      const [$bloodGroups, $hospitals, requestsInfo, $bankStock] =
+        await Promise.all([
+          getBloodGroups(),
+          getHospitals(),
+          getRequests(),
+          getByBankId(1),
+        ]);
 
-      bloodGroups.value = bloodGroupsInfo;
-      hospitals.value = hospitalsInfo;
+      bloodGroups.value = $bloodGroups;
+      hospitals.value = $hospitals;
+      bankStock.value = $bankStock;
+
       //Requests
       requestsHistory.value = requestsInfo.filter(
         (request) => request.active === false
@@ -113,6 +121,18 @@ export default {
       pendingRequests.value = requestsInfo.filter(
         (request) => request.active === true
       );
+
+      //Adds flag to know if there's enough stock for a request
+      pendingRequests.value = pendingRequests.value.map((request) => {
+        const stock = bankStock.value.find(
+          (stock) => stock.bloodGroup.id === request.bloodGroup.id
+        );
+        return {
+          ...request,
+          enoughStock: stock.quantity >= request.quantity,
+        };
+      });
+      console.log("pending", pendingRequests.value);
       isLoading.value = false;
     });
 
@@ -125,6 +145,7 @@ export default {
       requestsHistory,
       pendingRequests,
       solveRequest,
+      bankStock,
     };
   },
 };

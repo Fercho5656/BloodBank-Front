@@ -55,7 +55,7 @@ import Loading from "../components/Loading.vue";
 import Modal from "../components/Modal.vue";
 import { onMounted, ref, reactive } from "vue";
 import { getDonors, addDonor, deleteDonor } from "../services/API/Donors";
-import { getBloodGroupsInfo } from "../services/API/BloodGroups";
+import { getBloodGroups } from "../services/API/BloodGroups";
 import { addContactInfo } from "../services/API/ContactInfo";
 import { uploadToCloudinary } from "../services/Cloudinary/Upload";
 export default {
@@ -136,7 +136,7 @@ export default {
     };
 
     onMounted(async () => {
-      bloodGroups.value = await getBloodGroupsInfo();
+      bloodGroups.value = await getBloodGroups();
       donors.value = await getAllDonors();
       console.log(donors.value)
     });

@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary text-white mb-3">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">BloodBank</a>
+      <router-link to="/" class="navbar-brand">BloodBank</router-link>
       <button
         class="navbar-toggler"
         type="button"
@@ -17,19 +17,25 @@
       <div class="collapse navbar-collapse" id="navbarColor01">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" href="#">Inicio</a>
+            <router-link class="nav-link" to="/">Inicio</router-link>
           </li>
           <li class="nav-item" v-if="isLogged">
-            <a class="nav-link" href="#">Donarores</a>
+            <router-link class="nav-link" to="/donations"
+              >Donaciones</router-link
+            >
           </li>
           <li class="nav-item" v-if="isLogged">
-            <a class="nav-link" href="#">Donaciones</a>
+            <router-link class="nav-link" to="/donors">Donadores</router-link>
           </li>
           <li class="nav-item" v-if="isLogged">
-            <a class="nav-link" href="#">Solicitudes</a>
+            <router-link class="nav-link" to="/requests"
+              >Solicitudes</router-link
+            >
           </li>
           <li class="nav-item" v-if="isLogged">
-            <a class="nav-link" href="#">Ver Inventario</a>
+            <router-link class="nav-link" to="/inventory"
+              >Inventario</router-link
+            >
           </li>
         </ul>
       </div>
@@ -56,5 +62,8 @@ export default {
 }
 .bi {
   font-size: 2rem;
+}
+.navbar-nav .nav-link {
+  font-size: 1.2rem;
 }
 </style>

@@ -1,5 +1,8 @@
 <template>
-  <h1>Historial de Donaciones</h1>
+  <div class="actions">
+    <h1 class="text-white">Historial de Donaciones</h1>
+    <button class="btn btn-success btn-lg" @click="$emit('add-donation')">Añadir Donación</button>
+  </div>
   <table class="table table-dark table-hover">
     <thead>
       <tr>
@@ -21,21 +24,6 @@
         </td>
         <td v-else><button class="btn btn-success">Anexar Examen</button></td>
       </tr>
-      <!--       <tr>
-        <td>1</td>
-        <td>12/10/2021</td>
-        <td>Fernando Moreno</td>
-        <td>250 mL</td>
-        <td><button class="btn btn-info">Revisar Examen</button></td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>12/10/2021</td>
-        <td>Fernando Moreno</td>
-        <td>500 mL</td>
-        <td><button class="btn btn-success">Anexar Examen</button></td>
-      </tr>
- -->
     </tbody>
   </table>
 </template>
@@ -49,7 +37,7 @@ export default {
       required: true,
     },
   },
-  setup() {},
+  emits: ["add-donation"],
   computed: {
     donationsList() {
       return this.donations;
@@ -58,5 +46,11 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.actions {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 20px;
+}
 </style>
