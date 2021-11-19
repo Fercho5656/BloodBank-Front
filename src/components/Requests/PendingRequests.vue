@@ -19,15 +19,30 @@
         <td>{{ `${request.bloodGroup.bloodType}${request.bloodGroup.rh}` }}</td>
         <td>{{ request.quantity }}</td>
         <td>
-          <button
-            class="btn btn-success"
-            @click="$emit('accept-request', {request: request, status: 'Aceptada'})"
+          <span
+            tabindex="0"
+            :data-bs-toggle="!request.enoughStock ? 'tooltip' : null"
+            :data-bs-placement="!request.enoughStock ? 'top' : null"
+            :title="!request.enoughStock ? 'No hay suficiente stock' : null"
           >
-            Aceptar
-          </button>
+            <button
+              :disabled="!request.enoughStock"
+              class="btn btn-success"
+              @click="
+                $emit('accept-request', {
+                  request: request,
+                  status: 'Aceptada',
+                })
+              "
+            >
+              Aceptar
+            </button>
+          </span>
           <button
             class="btn btn-primary"
-            @click="$emit('reject-request', {request: request, status: 'Rechazada'})"
+            @click="
+              $emit('reject-request', { request: request, status: 'Rechazada' })
+            "
           >
             Rechazar
           </button>
