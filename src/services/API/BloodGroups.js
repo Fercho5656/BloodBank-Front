@@ -1,10 +1,11 @@
 const ENDPOINT = 'https://localhost:5001/api/bloodbank_bloodgroup';
+const ENDPOINT_GENERIC = 'https://localhost:5001/api/bloodgroup';
 
 export const getBloodGroups = async () => {
     try {
-        const response = await fetch(ENDPOINT);
-        const data = await response.json();
-        return data;
+        const response = await fetch(ENDPOINT_GENERIC);
+        const {$values} = await response.json();
+        return $values;
     } catch (error) {
         console.error(error);
     }
@@ -24,8 +25,8 @@ export const getBloodGroupsInfo = async () => {
 export const getByBankId = async (bankId) => {
     try {
         const response = await fetch(`${ENDPOINT}/${bankId}`);
-        const data = await response.json();
-        return data;
+        const {$values} = await response.json();
+        return $values;
     } catch (error) {
         console.error(error);
     }
