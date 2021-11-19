@@ -45,7 +45,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .card {
   border-radius: 2%;
   transition: transform 0.3s ease;
