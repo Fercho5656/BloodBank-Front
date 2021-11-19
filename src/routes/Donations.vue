@@ -1,17 +1,25 @@
 <template>
-  <div class="container text-white">
-    <NewDonation />
-    <hr />
-    <DonationHistory :donations="donations" />
+  <div class="container">
+    <Modal
+      :show="showModal"
+      @close="showModal = false"
+      @keydown.esc="showModal = false"
+      tabindex="0"
+    >
+      <NewDonation :donors="donors" @send-donation="sendDonation"/>
+    </Modal>
+    <DonationHistory :donations="donations" @add-donation="showModal = true" />
   </div>
   <Loading v-if="isLoading" />
 </template>
 
 <script>
-import NewDonation from "../components/NewDonation.vue";
-import DonationHistory from "../components/DonationHistory.vue";
+import NewDonation from "../components/Donations/NewDonation.vue";
+import Modal from "../components/Modal.vue";
+import DonationHistory from "../components/Donations/DonationHistory.vue";
 import Loading from "../components/Loading.vue";
-import { getDonations } from "../services/API/Donations";
+import { getDonations, addDonation } from "../services/API/Donations";
+import { getDonors } from "../services/API/Donors";
 import { onMounted, ref } from "vue";
 export default {
   name: "Donations",
@@ -19,10 +27,14 @@ export default {
     NewDonation,
     DonationHistory,
     Loading,
+    Modal,
   },
+  emits: ["add-donation"],
   setup() {
     const isLoading = ref(true);
     const donations = ref([]);
+    const donors = ref([]);
+    const showModal = ref(false);
 
     const getDonationsList = async () => {
       const donations = await getDonations();
@@ -30,15 +42,33 @@ export default {
       return donations;
     };
 
+    const getDonorsList = async () => {
+      const donors = await getDonors();
+      console.table(donors);
+      return donors;
+    }
+
+    const sendDonation = async (donation) => {
+      isLoading.value = true;
+      const response = await addDonation(donation);
+      donations.value.push(response);
+      isLoading.value = false;
+      showModal.value = false;
+    }
+
     onMounted(async () => {
       isLoading.value = true;
       donations.value = await getDonationsList();
+      donors.value = await getDonorsList();
       isLoading.value = false;
     });
 
     return {
       donations,
-      isLoading
+      isLoading,
+      showModal,
+      donors,
+      sendDonation
     };
   },
 };
