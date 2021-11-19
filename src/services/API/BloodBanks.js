@@ -3,8 +3,8 @@ const ENDPOINT = 'https://localhost:5001/api/bloodbanks'
 export const getAllBloodBanks = async () => {
     try {
         const response = await fetch(ENDPOINT)
-        const data = await response.json()
-        return data
+        const {$values} = await response.json()
+        return $values
     } catch (error) {
         console.error(error)
     }
