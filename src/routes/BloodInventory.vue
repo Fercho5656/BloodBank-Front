@@ -48,28 +48,24 @@ export default {
     const selectedBloodBank = ref(3);
     const isLoading = ref(true);
 
-    const getBloodGroups = async (id) => {
-      isLoading.value = true;
-      const { $values } = await getByBankId(id);
-      isLoading.value = false;
-      return $values;
-    };
+    const getBloodGroups = async (id) => await getByBankId(id);
 
-    const getBloodBanks = async () => {
-      isLoading.value = true;
-      const { $values } = await getAllBloodBanks();
-      isLoading.value = false;
-      return $values;
-    };
+    const getBloodBanks = async () => await getAllBloodBanks();
 
     const changeBloodBank = async () => {
+      isLoading.value = true;
       bloodGroups.value = await getBloodGroups(selectedBloodBank.value);
+      isLoading.value = false;
     };
 
     onMounted(async () => {
       isLoading.value = true;
-      bloodGroups.value = await getBloodGroups(selectedBloodBank.value);
-      bloodBanks.value = await getBloodBanks();
+      const [$bloodBanks, $bloodGroups] = await Promise.all([
+        getBloodBanks(),
+        getBloodGroups(selectedBloodBank.value),
+      ]);
+      bloodGroups.value = $bloodGroups;
+      bloodBanks.value = $bloodBanks;
       isLoading.value = false;
     });
 
