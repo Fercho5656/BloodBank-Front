@@ -1,4 +1,5 @@
 <template>
+  <Loading v-if="isLoading" />
   <div class="container">
     <h1 class="text-white text-center">Hospitales</h1>
     <Modal
@@ -15,13 +16,33 @@
         @close-modal="showModal = false"
       />
     </Modal>
+    <Modal
+      :show="showChartModal"
+      @close="showChartModal = false"
+      @keydown.esc="showChartModal = false"
+      tabindex="0"
+    >
+      <header class="download-pdf">
+        <h1 class="text-center">Hospitales</h1>
+        <button class="btn btn-success hide-on-print" @click="print()">
+          <i class="bi bi-printer"></i>
+        </button>
+      </header>
+      <DataTable
+        :headers="headers"
+        :content="selectedRows"
+        :readonly="true"
+        :exclude="['id', 'contactInfoId', 'country']"
+        :hoverable="false"
+        :dark="false"
+      />
+    </Modal>
     <DataTable
       :headers="headers"
       :content="content"
       :deleteRow="deleteRow"
       :updateRow="updateRow"
       :exclude="['id', 'contactInfoId', 'country']"
-      :isLoading="isLoading"
       @reload="getData"
       @open-modal="showModal = true"
       @add-mode="
@@ -34,14 +55,16 @@
           selectedRow = row;
         }
       "
-      @delete-row="({id}) => deleteRow(id)"
+      @delete-row="({ id }) => deleteRow(id)"
       @delete-selected="(ids) => deleteRows(ids)"
+      @download-pdf="(data) => downloadPdf(data)"
     />
   </div>
 </template>
 
 <script>
 import DataTable from "../components/DataTable.vue";
+import Loading from "../components/Loading.vue";
 import Modal from "../components/Modal.vue";
 import HospitalForm from "../components/Hospital/HospitalForm.vue";
 import { onMounted } from "@vue/runtime-core";
@@ -58,6 +81,7 @@ export default {
     DataTable,
     Modal,
     HospitalForm,
+    Loading,
   },
   emits: ["addRow", "updateRow", "deleteRow", "delete"],
   setup() {
@@ -72,10 +96,20 @@ export default {
     ];
     const content = ref([]);
     const showModal = ref(false);
+    const showChartModal = ref(false);
     const editingForm = ref(false);
     const isLoading = ref(true);
 
+    const selectedRows = ref(null);
+
     let selectedRow = reactive({});
+
+    const downloadPdf = (data) => {
+      selectedRows.value = data;
+      showChartModal.value = true;
+    };
+
+    const print = () => window.print();
 
     //CRUD Operations
 
@@ -144,10 +178,27 @@ export default {
       editingForm,
       selectedRow,
       isLoading,
+      showChartModal,
+      selectedRows,
+      downloadPdf,
+      print
     };
   },
 };
 </script>
 
-<style>
+<style scoped>
+.download-pdf {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+}
+@media print {
+  .hide-on-print {
+    display: none
+  }
+  @page {
+    size: landscape;
+  }
+}
 </style>
