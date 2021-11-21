@@ -1,8 +1,7 @@
 <template>
   <div class="shadow">
-    <div class="table-actions mb-3 shadow">
+    <div v-if="!readonly" class="table-actions mb-3 shadow">
       <button
-        v-if="!readonly"
         class="btn"
         @click="
           $emit('open-modal');
@@ -19,7 +18,7 @@
       />
       <button
         class="btn"
-        :disabled="tableContent.length === 0 || selectedRows.length === 0"
+        :disabled="tableContent.length === 0 || selectedRowsIds.length === 0"
         @click="unselectDeleted"
       >
         <i class="bi bi-trash text-light"></i>
@@ -27,15 +26,15 @@
       <button class="btn" @click="$emit('reload')">
         <i class="bi bi-arrow-clockwise text-info"></i>
       </button>
-      <button class="btn">
+      <button class="btn" @click="$emit('download-pdf', selectedRowsData)">
         <i class="bi bi-download text-success"></i>
       </button>
     </div>
     <div class="table-responsive">
-      <table class="table table-dark table-hover">
+      <table :class="tableClass">
         <thead>
           <tr>
-            <th>
+            <th v-if="!readonly">
               <input
                 type="checkbox"
                 class="form-check-input checkbox"
@@ -46,17 +45,17 @@
             <th v-for="header in headers" :key="header">
               {{ header }}
             </th>
-            <th>Acciones</th>
+            <th v-if="!readonly">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="data in tableContent" :key="data.id" :data-id="data.id">
-            <td>
+            <td v-if="!readonly">
               <input
                 type="checkbox"
                 class="form-check-input checkbox"
-                @change="selectRow(data.id)"
-                :checked="selectedRows.includes(data.id)"
+                @change="selectRow(data)"
+                :checked="selectedRowsIds.includes(data.id)"
               />
             </td>
             <template v-for="(value, index) in data" :key="value">
@@ -65,7 +64,7 @@
               </td>
             </template>
             <td>
-              <div class="action-buttons shadow">
+              <div class="action-buttons shadow" v-if="!readonly">
                 <button
                   class="btn"
                   @click="
@@ -73,43 +72,45 @@
                     $emit('edit-mode', data);
                   "
                 >
-                  <i :class=editIcon></i>
+                  <i :class="editIcon"></i>
                 </button>
                 <button class="btn" @click="$emit('delete-row', data)">
-                  <i :class=deleteIcon></i>
+                  <i :class="deleteIcon"></i>
                 </button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
-      <Loading v-if="isLoading" />
     </div>
   </div>
 </template>
 
 <script>
 import { ref } from "vue";
-import Loading from "../components/Loading.vue";
 export default {
   name: "DataTable",
-  components: {
-    Loading,
-  },
   props: {
     headers: Array,
     content: Array,
     apiUrl: String,
     deleteRow: Function,
     updateRow: Function,
-    exclude: Array,
+    hoverable: {
+      type: Boolean,
+      default: true,
+    },
+    dark: {
+      type: Boolean,
+      default: true,
+    },
+    exclude: {
+      type: Array,
+      default: () => [],
+    },
     readonly: {
       type: Boolean,
       default: false,
-    },
-    isLoading: {
-      type: Boolean,
-      default: true,
     },
     editIcon: {
       type: String,
@@ -127,36 +128,48 @@ export default {
     "reload",
     "delete-row",
     "delete-selected",
+    "download-pdf",
   ],
   setup(props, { emit }) {
     const searchQuery = ref("");
-    const selectedRows = ref([]);
+    const selectedRowsIds = ref([]);
+    const selectedRowsData = ref([]);
     const allSelected = ref(false);
 
-    const selectRow = (id) => {
-      if (selectedRows.value.includes(id)) {
-        selectedRows.value = selectedRows.value.filter((item) => item !== id);
+    const selectRow = (data) => {
+      const { id } = data;
+      if (selectedRowsIds.value.includes(id)) {
+        selectedRowsIds.value = selectedRowsIds.value.filter(
+          (item) => item !== id
+        );
+        selectedRowsData.value = selectedRowsData.value.filter(
+          (item) => item.id !== id
+        );
       } else {
-        selectedRows.value.push(id);
+        selectedRowsIds.value.push(id);
+        selectedRowsData.value.push(data);
       }
     };
 
     const selectAll = () => {
       if (!allSelected.value) {
-        selectedRows.value = [];
+        selectedRowsIds.value = [];
+        selectedRowsData.value = [];
       } else {
-        selectedRows.value = props.content.map((item) => item.id);
+        selectedRowsIds.value = props.content.map((item) => item.id);
+        selectedRowsData.value = props.content;
       }
     };
 
     const unselectDeleted = () => {
-      emit("delete-selected", selectedRows.value);
-      selectedRows.value = [];
+      emit("delete-selected", selectedRowsIds.value);
+      selectedRowsIds.value = [];
     };
 
     return {
       searchQuery,
-      selectedRows,
+      selectedRowsIds,
+      selectedRowsData,
       selectRow,
       selectAll,
       allSelected,
@@ -171,6 +184,13 @@ export default {
           .toLowerCase()
           .includes(this.searchQuery.toLowerCase());
       });
+    },
+    tableClass() {
+      //returns a string of table classes if a flag is true
+      let tableClass = "table ";
+      this.hoverable ? (tableClass += "table-hover ") : tableClass;
+      this.dark ? (tableClass += "table-dark ") : tableClass;
+      return tableClass;
     },
   },
 };
