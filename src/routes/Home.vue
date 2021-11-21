@@ -54,6 +54,13 @@ export default {
         icon: "bi bi-box-seam",
         link: "/inventory",
       },
+      {
+        name: "Hospitales",
+        description:
+          "En esta sección encontrarás los hospitales que han sido registrados.",
+        icon: "bi bi-truck",
+        link: "/hospitals",
+      },
     ];
     return {
       routes,

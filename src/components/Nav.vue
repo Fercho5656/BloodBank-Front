@@ -20,22 +20,27 @@
             <router-link class="nav-link" to="/">Inicio</router-link>
           </li>
           <li class="nav-item" v-if="isLogged">
-            <router-link class="nav-link" to="/donations"
-              >Donaciones</router-link
-            >
+            <router-link class="nav-link" to="/donations">
+              Donaciones
+            </router-link>
           </li>
           <li class="nav-item" v-if="isLogged">
             <router-link class="nav-link" to="/donors">Donadores</router-link>
           </li>
           <li class="nav-item" v-if="isLogged">
-            <router-link class="nav-link" to="/requests"
-              >Solicitudes</router-link
-            >
+            <router-link class="nav-link" to="/requests">
+              Solicitudes
+            </router-link>
           </li>
           <li class="nav-item" v-if="isLogged">
-            <router-link class="nav-link" to="/inventory"
-              >Inventario</router-link
-            >
+            <router-link class="nav-link" to="/inventory">
+              Inventario
+            </router-link>
+          </li>
+          <li class="nav-item" v-if="isLogged">
+            <router-link class="nav-link" to="/hospitals">
+              Hospitales
+            </router-link>
           </li>
         </ul>
       </div>
