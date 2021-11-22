@@ -1,6 +1,6 @@
 <template>
   <div class="user-info">
-    <div class="user-info__basic">
+    <header class="user-info__basic">
       <div class="user-info__avatar">
         <img :src="userInfo.profilePicURL" alt="" />
       </div>
@@ -10,14 +10,17 @@
         </p>
       </div>
       <div class="actions">
-        <button class="btn">
+        <button class="btn print">
           <i class="bi bi-pencil" @click="$emit('edit-user')"></i>
         </button>
-        <button class="btn" @click="$emit('delete-user', userInfo.id)">
+        <button class="btn print" @click="$emit('delete-user', userInfo.id)">
           <i class="bi bi-trash"></i>
         </button>
+        <button class="btn btn-success print" @click="print">
+          <i class="bi bi-printer"></i>
+        </button>
       </div>
-    </div>
+    </header>
     <div class="user-info__contact-info">
       <p>
         Tipo de sangre: {{ userInfo.bloodGroup.bloodType
@@ -48,8 +51,13 @@ export default {
   setup(props) {
     const userInfo = ref(props.user);
     const contactInfo = ref(userInfo.value.contactInfo);
-    console.log(userInfo.value);
+
+    const print = () => {
+      window.print();
+    };
+
     return {
+      print,
       userInfo,
       contactInfo,
     };
@@ -57,7 +65,15 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+@media print {
+  .print {
+    display: none;
+  }
+  @page {
+    size: portrait;
+  }
+}
 .user-info {
   display: flex;
   flex-direction: column;
