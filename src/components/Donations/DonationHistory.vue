@@ -1,14 +1,20 @@
 <template>
-  <div class="actions">
+  <header class="actions">
     <h1 class="text-white">Historial de Donaciones</h1>
-    <button class="btn btn-success btn-lg" @click="$emit('add-donation')">Añadir Donación</button>
-  </div>
+    <button class="btn btn-success btn-lg" @click="$emit('add-donation')">
+      Añadir Donación
+    </button>
+    <button class="btn btn-success" @click="$emit('prepareReport')">
+      <i class="bi bi-printer"></i>
+    </button>
+  </header>
   <table class="table table-dark table-hover">
     <thead>
       <tr>
         <th>#</th>
         <th>Fecha</th>
         <th>Donador</th>
+        <th>Tipo de Sangre</th>
         <th>Cantidad (mL)</th>
         <th>Examen de Sangre</th>
       </tr>
@@ -18,6 +24,11 @@
         <td>{{ donation.id }}</td>
         <td>{{ donation.date }}</td>
         <td>{{ donation.donor.fullName }}</td>
+        <td>
+          {{
+            `${donation.donor.bloodGroup.bloodType}${donation.donor.bloodGroup.rh }`
+          }}
+        </td>
         <td>{{ donation.quantity }}</td>
         <td v-if="donation.bloodTest !== null">
           <button class="btn btn-info">Revisar Examen</button>
@@ -37,7 +48,10 @@ export default {
       required: true,
     },
   },
-  emits: ["add-donation"],
+  emits: ["add-donation", "prepareReport"],
+  setup(props) {
+    console.log(props.donations);
+  },
   computed: {
     donationsList() {
       return this.donations;
