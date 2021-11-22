@@ -39,7 +39,11 @@
     @keydown="showPrintModal = false"
     tabindex="0"
   >
-    <InventoryReport :data="reportData" :title="selectedBankName" />
+    <InventoryReport
+      :data="reportData"
+      :title="`Inventario ${selectedBankName}`"
+      description="Cantidad de sangre en mililitros"
+    />
   </Modal>
 </template>
 
@@ -109,7 +113,7 @@ export default {
       showPrintModal,
       prepareReport,
       reportData,
-      selectedBankName
+      selectedBankName,
     };
   },
 };
