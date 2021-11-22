@@ -6,15 +6,28 @@
       @keydown.esc="showModal = false"
       tabindex="0"
     >
-      <NewDonation :donors="donors" @send-donation="sendDonation"/>
+      <NewDonation :donors="donors" @send-donation="sendDonation" />
     </Modal>
-    <DonationHistory :donations="donations" @add-donation="showModal = true" />
+    <Modal
+      :show="showReportModal"
+      @close="showReportModal = false"
+      @keydown.esc="showReportModal = false"
+      tabindex="0"
+    >
+      <DonationReport :donations="donations"/>
+    </Modal>
+    <DonationHistory
+      :donations="donations"
+      @add-donation="showModal = true"
+      @prepareReport="showReportModal = true"
+    />
   </div>
   <Loading v-if="isLoading" />
 </template>
 
 <script>
 import NewDonation from "../components/Donations/NewDonation.vue";
+import DonationReport from '../components/Donations/DonationReport.vue'
 import Modal from "../components/Modal.vue";
 import DonationHistory from "../components/Donations/DonationHistory.vue";
 import Loading from "../components/Loading.vue";
@@ -26,6 +39,7 @@ export default {
   components: {
     NewDonation,
     DonationHistory,
+    DonationReport,
     Loading,
     Modal,
   },
@@ -35,18 +49,17 @@ export default {
     const donations = ref([]);
     const donors = ref([]);
     const showModal = ref(false);
+    const showReportModal = ref(false);
 
     const getDonationsList = async () => {
       const donations = await getDonations();
-      console.table(donations);
       return donations;
     };
 
     const getDonorsList = async () => {
       const donors = await getDonors();
-      console.table(donors);
       return donors;
-    }
+    };
 
     const sendDonation = async (donation) => {
       isLoading.value = true;
@@ -54,7 +67,7 @@ export default {
       donations.value.push(response);
       isLoading.value = false;
       showModal.value = false;
-    }
+    };
 
     onMounted(async () => {
       isLoading.value = true;
@@ -68,7 +81,8 @@ export default {
       isLoading,
       showModal,
       donors,
-      sendDonation
+      sendDonation,
+      showReportModal,
     };
   },
 };
