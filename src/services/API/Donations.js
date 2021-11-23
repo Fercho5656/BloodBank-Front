@@ -1,4 +1,4 @@
-const ENDPOINT = 'https://localhost:5001/api/Donation'
+const ENDPOINT = 'https://192.168.1.1:5001/api/Donation'
 
 export const addDonation = async (donation) => {
     try {

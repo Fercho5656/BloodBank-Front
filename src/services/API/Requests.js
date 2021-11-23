@@ -1,4 +1,4 @@
-const ENDPOINT = 'https://localhost:5001/api/request/'
+const ENDPOINT = 'https://192.168.1.1:5001/api/request/'
 
 export const getRequests = async () => {
     try {

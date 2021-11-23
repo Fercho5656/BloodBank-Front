@@ -1,4 +1,4 @@
-const ENDPOINT = 'https://localhost:5001/api/bloodbanks'
+const ENDPOINT = 'https://192.168.1.1:5001/api/bloodbanks'
 
 export const getAllBloodBanks = async () => {
     try {

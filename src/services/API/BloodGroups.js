@@ -1,5 +1,5 @@
-const ENDPOINT = 'https://localhost:5001/api/bloodbank_bloodgroup';
-const ENDPOINT_GENERIC = 'https://localhost:5001/api/bloodgroup';
+const ENDPOINT = 'https://192.168.1.1:5001/api/bloodbank_bloodgroup';
+const ENDPOINT_GENERIC = 'https://192.168.1.1:5001/api/bloodgroup';
 
 export const getBloodGroups = async () => {
     try {

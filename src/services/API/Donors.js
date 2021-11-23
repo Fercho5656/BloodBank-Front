@@ -1,4 +1,4 @@
-const ENDPOINT = "https://localhost:5001/api/donor";
+const ENDPOINT = "https://192.168.1.1:5001/api/donor";
 const MILLISECONDS_IN_YEAR = 31536000000;
 
 export const getDonors = async () => {
