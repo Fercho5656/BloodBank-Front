@@ -14,16 +14,27 @@
         v-model="formData.fullName"
       />
     </div>
-    <div class="mb-3">
-      <label class="form-label" for="donorProfilePic"> Foto de Perfil </label>
-      <input
-        type="file"
-        class="form-control"
-        id="donorProfilePic"
-        accept="image/*"
-        @change="onFileChange"
-        required
-      />
+    <div class="row mb-3">
+      <div class="col-6">
+        <label class="form-label" for="donorProfilePic"> Foto de Perfil </label>
+        <input
+          type="file"
+          class="form-control"
+          id="donorProfilePic"
+          accept="image/*"
+          @change="onFileChange"
+          required
+        />
+      </div>
+      <div class="col-6">
+        <label class="form-label" for="donorBank">Banco</label>
+        <select class="form-control custom-select" v-model="formData.bloodBankId">
+          <option value="">Seleccione un Banco</option>
+          <option v-for="bank in banks" :value="bank.id" :key="bank.$id">
+            {{ bank.bankName }}
+          </option>
+        </select>
+      </div>
     </div>
     <div class="row mb-3">
       <div class="col-6">
@@ -145,6 +156,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    banks: {
+      type: Array,
+      default: () => [],
+    },
   },
   emits: ["add", "edit", "close-modal"],
   setup(props, { emit }) {
@@ -167,6 +182,7 @@ export default {
         formData.bloodGroupId = props.form.bloodGroupId;
         formData.birthdate = props.form.birthdate;
         formData.profilePic = props.form.profilePic;
+        formData.bloodBankId = props.form.bloodBankId;
       }
     });
 
@@ -190,6 +206,11 @@ export default {
       onFileChange,
       bloodGroupsSelect,
     };
+  },
+  computed: {
+    banksList() {
+      return this.banks;
+    },
   },
 };
 </script>
