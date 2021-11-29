@@ -14,7 +14,7 @@
       @keydown.esc="showReportModal = false"
       tabindex="0"
     >
-      <DonationReport :donations="donations"/>
+      <DonationReport :donations="donations" />
     </Modal>
     <DonationHistory
       :donations="donations"
@@ -27,7 +27,7 @@
 
 <script>
 import NewDonation from "../components/Donations/NewDonation.vue";
-import DonationReport from '../components/Donations/DonationReport.vue'
+import DonationReport from "../components/Donations/DonationReport.vue";
 import Modal from "../components/Modal.vue";
 import DonationHistory from "../components/Donations/DonationHistory.vue";
 import Loading from "../components/Loading.vue";
@@ -51,16 +51,6 @@ export default {
     const showModal = ref(false);
     const showReportModal = ref(false);
 
-    const getDonationsList = async () => {
-      const donations = await getDonations();
-      return donations;
-    };
-
-    const getDonorsList = async () => {
-      const donors = await getDonors();
-      return donors;
-    };
-
     const sendDonation = async (donation) => {
       isLoading.value = true;
       const response = await addDonation(donation);
@@ -71,8 +61,12 @@ export default {
 
     onMounted(async () => {
       isLoading.value = true;
-      donations.value = await getDonationsList();
-      donors.value = await getDonorsList();
+      const [$donations, $donors] = await Promise.all([
+        getDonations(),
+        getDonors(),
+      ]);
+      donations.value = $donations;
+      donors.value = $donors;
       isLoading.value = false;
     });
 
