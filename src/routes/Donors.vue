@@ -35,7 +35,7 @@
     @keydown.esc="showAddDonorModal = false"
     tabindex="0"
   >
-    <DonorForm :addRow="postDonor" :bloodGroups="bloodGroups" />
+    <DonorForm :addRow="postDonor" :bloodGroups="bloodGroups" :banks="banks" />
   </Modal>
   <Modal
     :show="showDonorInfoModal"
@@ -55,6 +55,7 @@ import Loading from "../components/Loading.vue";
 import Modal from "../components/Modal.vue";
 import { onMounted, ref, reactive } from "vue";
 import { getDonors, addDonor, deleteDonor } from "../services/API/Donors";
+import { getAllBloodBanks } from "../services/API/BloodBanks";
 import { getBloodGroups } from "../services/API/BloodGroups";
 import { addContactInfo } from "../services/API/ContactInfo";
 import { uploadToCloudinary } from "../services/Cloudinary/Upload";
@@ -63,6 +64,7 @@ export default {
   components: { UserCard, UserInfo, Loading, Modal, DonorForm },
   setup() {
     const donors = ref([]);
+    const banks = ref([]);
     const isLoading = ref(true);
     const showDonorInfoModal = ref(false);
     const showAddDonorModal = ref(false);
@@ -78,7 +80,8 @@ export default {
 
     const postDonor = async (donor) => {
       isLoading.value = true;
-      const { address, city, email, phone, postalCode, state } = donor;
+      const { address, city, email, phone, postalCode, state, bloodBankId } =
+        donor;
       const contactInfoData = {
         address,
         city,
@@ -92,22 +95,12 @@ export default {
       const contactInfoResponse = await addContactInfo(contactInfoData);
       const donorBody = {
         ...donor,
-        bloodBankId: 1,
+        bloodBankId,
         contactInfoId: contactInfoResponse.id,
         profilePicURL: imgResponse.url,
       };
       // eslint-disable-next-line no-unused-vars
       const donorResponse = await addDonor(donorBody);
-      /* console.log('donorResponse', donorResponse);
-      console.log('imgResponse', imgResponse);
-      console.log('contactInfoResponse', contactInfoResponse); */
-      /* donors.value.push({
-        ...contactInfoResponse,
-        ...donorResponse,
-        bloodBankId: 1,
-        profilePicURL: imgResponse.url,
-        contactInfoId: contactInfoResponse.id,
-      }) */
       reloadDonors();
       isLoading.value = false;
       showAddDonorModal.value = false;
@@ -117,7 +110,6 @@ export default {
       if (confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
         isLoading.value = true;
         await deleteDonor(id);
-        //donors.value = donors.value.filter((donor) => donor.id !== id);
         donors.value = await getAllDonors();
         showDonorInfoModal.value = false;
         isLoading.value = false;
@@ -136,9 +128,15 @@ export default {
     };
 
     onMounted(async () => {
-      bloodGroups.value = await getBloodGroups();
-      donors.value = await getAllDonors();
-      console.log(donors.value)
+      const [$bloodGroups, $donors, $banks] = await Promise.all([
+        getBloodGroups(),
+        getDonors(),
+        getAllBloodBanks(),
+      ]);
+      bloodGroups.value = $bloodGroups;
+      donors.value = $donors;
+      banks.value = $banks;
+      isLoading.value = false;
     });
 
     return {
@@ -152,6 +150,7 @@ export default {
       bloodGroups,
       reloadDonors,
       deleteUser,
+      banks,
     };
   },
 };
