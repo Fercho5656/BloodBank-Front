@@ -67,11 +67,16 @@ export default {
 
     const bankStock = ref([]);
 
+    const bankId = ref(null);
+
     const sendRequest = async (request) => {
       isLoading.value = true;
       //Change bloodBankId with the one in GlobalState
-      const result = await createRequest({ ...request, bloodBankId: 1 });
-      pendingRequests.value.push({...result, date: new Date(request.date).toLocaleDateString()});
+      const result = await createRequest({ ...request, bloodBankId: bankId.value });
+      pendingRequests.value.push({
+        ...result,
+        date: new Date(request.date).toLocaleDateString(),
+      });
       showCreateRequestModal.value = false;
       isLoading.value = false;
     };
@@ -102,12 +107,13 @@ export default {
 
     onMounted(async () => {
       isLoading.value = true;
+      bankId.value = +localStorage.getItem("bankId");
       const [$bloodGroups, $hospitals, requestsInfo, $bankStock] =
         await Promise.all([
           getBloodGroups(),
           getHospitals(),
           getRequests(),
-          getByBankId(1),
+          getByBankId(bankId.value),
         ]);
 
       bloodGroups.value = $bloodGroups;
@@ -116,10 +122,12 @@ export default {
 
       //Requests
       requestsHistory.value = requestsInfo.filter(
-        (request) => request.active === false
+        (request) =>
+          request.active === false && request.bloodBank.id === bankId.value
       );
       pendingRequests.value = requestsInfo.filter(
-        (request) => request.active === true
+        (request) =>
+          request.active === true && request.bloodBank.id === bankId.value
       );
 
       //Adds flag to know if there's enough stock for a request
@@ -146,6 +154,7 @@ export default {
       pendingRequests,
       solveRequest,
       bankStock,
+      bankId,
     };
   },
 };
