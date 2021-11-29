@@ -27,12 +27,15 @@
         }}{{ userInfo.bloodGroup.rh }}
       </p>
       <hr />
-      <p>
-        Domicilio: {{ contactInfo.address }}, {{ contactInfo.postalCode }} -
-        {{ contactInfo.city }}, {{ contactInfo.state }}
-      </p>
-      <p>Teléfono: {{ contactInfo.phone }}</p>
-      <p>Correo Electrónico: {{ contactInfo.email }}</p>
+      <ul>
+        <li>
+          Domicilio: {{ contactInfo.address }}, {{ contactInfo.postalCode }} -
+          {{ contactInfo.city }}, {{ contactInfo.state }}
+        </li>
+        <li>Teléfono: {{ contactInfo.phone }}</li>
+        <li>Correo Electrónico: {{ contactInfo.email }}</li>
+        <li>Banco: {{ userInfo.bloodBank.bankName }}</li>
+      </ul>
     </div>
   </div>
 </template>
@@ -103,5 +106,13 @@ export default {
 .user-info__contact-info {
   font-size: 0.85rem;
   padding: 0.5rem;
+}
+.user-info__contact-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.user-info__contact-info ul li {
+  margin-bottom: 0.5rem;
 }
 </style>
